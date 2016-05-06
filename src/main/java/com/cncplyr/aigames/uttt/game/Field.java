@@ -30,67 +30,68 @@ import java.util.ArrayList;
  */
 
 public class Field {
-    private int mRoundNr;
-    private int mMoveNr;
-    private int[][] mBoard;
-    private int[][] mMacroboard;
+    private int round;
+    private int move;
+    private int[][] microBoard;
+    private int[][] macroBoard;
 
     private final int COLS = 9, ROWS = 9;
-    private String mLastError = "";
+    private String lastError = "";
 
     public Field() {
-        mBoard = new int[COLS][ROWS];
-        mMacroboard = new int[COLS / 3][ROWS / 3];
+        microBoard = new int[COLS][ROWS];
+        macroBoard = new int[COLS / 3][ROWS / 3];
         clearBoard();
     }
 
     /**
      * Parse data about the game given by the engine
      *
-     * @param key   : type of data given
-     * @param value : value
+     * @param key   type of data given
+     * @param value value
      */
     public void parseGameData(String key, String value) {
-        if (key.equals("round")) {
-            mRoundNr = Integer.parseInt(value);
-        } else if (key.equals("move")) {
-            mMoveNr = Integer.parseInt(value);
-        } else if (key.equals("field")) {
-            parseFromString(value); /* Parse Field with data */
-        } else if (key.equals("macroboard")) {
-            parseMacroboardFromString(value); /* Parse macroboard with data */
+        switch (key) {
+            case "round":
+                round = Integer.parseInt(value);
+                break;
+            case "move":
+                move = Integer.parseInt(value);
+                break;
+            case "field":
+                parseFromString(value); /* Parse Field with data */
+                break;
+            case "macroboard":
+                parseMacroBoardFromString(value); /* Parse macroBoard with data */
+                break;
         }
     }
 
     /**
      * Initialise field from comma separated String
-     *
-     * @param String :
      */
     public void parseFromString(String s) {
-        System.err.println("Move " + mMoveNr);
+        System.err.println("Move " + move);
         s = s.replace(";", ",");
         String[] r = s.split(",");
         int counter = 0;
         for (int y = 0; y < ROWS; y++) {
             for (int x = 0; x < COLS; x++) {
-                mBoard[x][y] = Integer.parseInt(r[counter]);
+                microBoard[x][y] = Integer.parseInt(r[counter]);
                 counter++;
             }
         }
     }
 
     /**
-     * Initialise macroboard from comma separated String
-     *
-     * @param String :
+     * Initialise macroBoard from comma separated String
      */
-    public void parseMacroboardFromString(String s) {
+    public void parseMacroBoardFromString(String s) {
         String[] r = s.split(",");
         int counter = 0;
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
-                mMacroboard[x][y] = Integer.parseInt(r[counter]);
+                macroBoard[x][y] = Integer.parseInt(r[counter]);
                 counter++;
             }
         }
@@ -99,17 +100,17 @@ public class Field {
     public void clearBoard() {
         for (int x = 0; x < COLS; x++) {
             for (int y = 0; y < ROWS; y++) {
-                mBoard[x][y] = 0;
+                microBoard[x][y] = 0;
             }
         }
     }
 
     public ArrayList<Move> getAvailableMoves() {
-        ArrayList<Move> moves = new ArrayList<Move>();
+        ArrayList<Move> moves = new ArrayList<>();
 
         for (int y = 0; y < ROWS; y++) {
             for (int x = 0; x < COLS; x++) {
-                if (isInActiveMicroboard(x, y) && mBoard[x][y] == 0) {
+                if (isInActiveMicroboard(x, y) && microBoard[x][y] == 0) {
                     moves.add(new Move(x, y));
                 }
             }
@@ -119,24 +120,20 @@ public class Field {
     }
 
     public Boolean isInActiveMicroboard(int x, int y) {
-        return mMacroboard[(int) x / 3][(int) y / 3] == -1;
+        return macroBoard[x / 3][y / 3] == -1;
     }
 
     /**
      * Returns reason why addMove returns false
-     *
-     * @param args :
-     * @return : reason why addMove returns false
      */
     public String getLastError() {
-        return mLastError;
+        return lastError;
     }
 
 
     @Override
     /**
      * Creates comma separated String with player ids for the microboards.
-     * @param args :
      * @return : String with player names for every cell, or 'empty' when cell is empty.
      */
     public String toString() {
@@ -147,7 +144,7 @@ public class Field {
                 if (counter > 0) {
                     r += ",";
                 }
-                r += mBoard[x][y];
+                r += microBoard[x][y];
                 counter++;
             }
         }
@@ -157,13 +154,12 @@ public class Field {
     /**
      * Checks whether the field is full
      *
-     * @param args :
-     * @return : Returns true when field is full, otherwise returns false.
+     * @return true when field is full, otherwise returns false.
      */
     public boolean isFull() {
         for (int x = 0; x < COLS; x++)
             for (int y = 0; y < ROWS; y++)
-                if (mBoard[x][y] == 0)
+                if (microBoard[x][y] == 0)
                     return false; // At least one cell is not filled
         // All cells are filled
         return true;
@@ -180,7 +176,7 @@ public class Field {
     public boolean isEmpty() {
         for (int x = 0; x < COLS; x++) {
             for (int y = 0; y < ROWS; y++) {
-                if (mBoard[x][y] > 0) {
+                if (microBoard[x][y] > 0) {
                     return false;
                 }
             }
@@ -191,10 +187,10 @@ public class Field {
     /**
      * Returns the player id on given column and row
      *
-     * @param args : int column, int row
-     * @return : int
+     * @param column the given column
+     * @param row    the given row
      */
     public int getPlayerId(int column, int row) {
-        return mBoard[column][row];
+        return microBoard[column][row];
     }
 }

@@ -34,17 +34,18 @@ import java.util.Scanner;
 public class BotParser {
 
     private final Scanner scan;
-    private final BotStarter bot;
+    private final RandomBot bot;
 
     public static int mBotId = 0;
 
-    public BotParser(BotStarter bot) {
+    public BotParser(RandomBot bot) {
         this.scan = new Scanner(System.in);
         this.bot = bot;
     }
 
     public void run() {
-        Field mField = new Field();
+        Field field = new Field();
+
         while (scan.hasNextLine()) {
             String line = scan.nextLine();
 
@@ -53,19 +54,30 @@ public class BotParser {
             }
 
             String[] parts = line.split(" ");
-            if (parts[0].equals("settings")) {
-                if (parts[1].equals("your_botid")) {
-                    mBotId = Integer.parseInt(parts[2]);
-                }
-            } else if (parts[0].equals("update") && parts[1].equals("game")) { /* new game data */
-                mField.parseGameData(parts[2], parts[3]);
-            } else if (parts[0].equals("action")) {
-                if (parts[1].equals("move")) { /* move requested */
-                    Move move = this.bot.makeTurn(mField);
-                    System.out.println("place_move " + move.getX() + " " + move.getY());
-                }
-            } else {
-                System.out.println("unknown command");
+            String command = parts[0];
+            String commandType = parts[1];
+
+            switch (command) {
+                case "settings":
+                    if (commandType.equals("your_botid")) {
+                        mBotId = Integer.parseInt(parts[2]);
+                    }
+                    break;
+                case "update":
+                    if (commandType.equals("game")) {
+                    /* new game data */
+                        field.parseGameData(parts[2], parts[3]);
+                    }
+                    break;
+                case "action":
+                    if (commandType.equals("move")) {
+                    /* move requested */
+                        Move move = this.bot.makeTurn(field);
+                        System.out.println("place_move " + move.getX() + " " + move.getY());
+                    }
+                    break;
+                default:
+                    System.out.println("unknown command");
             }
         }
     }

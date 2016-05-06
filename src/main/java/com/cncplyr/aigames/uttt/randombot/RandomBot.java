@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * BotStarter class
+ * RandomBot class
  * <p>
  * Magic happens here. You should edit this file, or more specifically
  * the makeTurn() method to make your bot do more than random moves.
@@ -32,7 +32,7 @@ import java.util.Random;
  * @author Jim van Eeden <jim@starapple.nl>
  */
 
-public class BotStarter {
+public class RandomBot {
 
     /**
      * Makes a turn. Edit this method to make your bot smarter.
@@ -43,14 +43,13 @@ public class BotStarter {
     public Move makeTurn(Field field) {
         Random r = new Random();
         ArrayList<Move> moves = field.getAvailableMoves();
-        Move move = moves.get(r.nextInt(moves.size())); /* get random move from available moves */
 
-        return move;
+        return moves.get(r.nextInt(moves.size()));
     }
 
 
     public static void main(String[] args) {
-        BotParser parser = new BotParser(new BotStarter());
+        BotParser parser = new BotParser(new RandomBot());
         parser.run();
     }
 }

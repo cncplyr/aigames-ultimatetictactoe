@@ -14,28 +14,31 @@
 //
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
+
 package com.cncplyr.aigames.uttt.game;
 
 /**
  * Move class
- *
+ * <p>
  * Stores a move.
  *
  * @author Jim van Eeden <jim@starapple.nl>, Joost de Meij <joost@starapple.nl>
  */
 
 public class Move {
-    int mX, mY;
-
-    public Move() {
-    }
+    private final int x, y;
 
     public Move(int x, int y) {
-        mX = x;
-        mY = y;
+        this.x = x;
+        this.y = y;
     }
 
-    public int getX() { return mX; }
-    public int getY() { return mY; }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 
 }
